@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>群聊设置</title>
+    <!-- iOS添加到主屏幕图标设置 -->
+  <link rel="apple-touch-icon" href="https://xikayun.com/qun/img/QQ.png">
+  <link rel="apple-touch-icon-precomposed" href="https://xikayun.com/qun/img/QQ.png">
+  <meta name="apple-mobile-web-app-title" content="QQ">
+  <!-- iOS全屏配置 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- 隐藏浏览器地址栏 -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
+    body {
+      background-color: #f2f2f2;
+      /* iOS安全区域适配 - 只保留左右下内边距，顶部由header处理 */
+      padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      min-height: 100vh;
+      /* 确保页面高度足够滚动以隐藏地址栏 */
+      height: 100%;
+      overflow-x: hidden;
+    }
+    /* 确保主内容区域也适配安全区域 */
+    #mainContent {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .header { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      padding: 3px 16px;
+      /* iOS安全区域适配 - 顶部内边距 */
+      padding-top: calc(3px + env(safe-area-inset-top));
+      background: #fff; 
+      position: fixed;
+      /* 使用top: 0配合padding-top来适配安全区域 */
+      top: 0;
+      left: env(safe-area-inset-left);
+      right: env(safe-area-inset-right);
+      width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
+      max-width: 448px;
+      z-index: 1000;
+      /* 确保header背景延伸到状态栏 */
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .header h2 { 
+      margin-top: 1.7px;
+      text-align: center;
+    }
+    .left-btn { 
+      width: 20px; 
+      height: 20px; 
+      position: absolute;
+      left: 16px;
+    }
+    .right-btn { 
+      width: 24px; 
+      height: 24px; 
+      position: absolute;
+      right: 16px;
+    }
+    .card-container { 
+      /* 适配header的高度变化，确保内容不被遮挡 */
+      margin-top: calc(60px + env(safe-area-inset-top));
+    }
+    .card { 
+      background: #fff; 
+      border-radius: 12px; 
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03); 
+      margin: 0 18px 8px;
+    }
+    .group-card {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+    }
+    .group-card .flex {
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+    }
+    .group-avatar { 
+      width: 50px; 
+      height: 50px; 
+      border-radius: 50%; 
+      background: url('https://xikayun.com/qun/img/logo.png') center/cover; 
+      cursor: pointer;
+    }
+    .group-card .text-sm {
+      font-size: 14px;
+      margin-top: 1px;
+    }
+    .member-avatar { 
+      width: 36.5px; 
+      height: 36.5px; 
+      border-radius: 50%; 
+      margin: 0 auto; 
+      background: url('https://xikayun.com/qun/img/logo.png') center/cover;
+      cursor: pointer;
+    }
+    .members-card {
+      padding: 18px 20px;
+    }
+    .members-title {
+      font-size: 18px;
+      font-weight: 400;
+    }
+    .members-card .flex.justify-between {
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .group-card .font-medium {
+      font-weight: 400;
+      font-size: 17px;
+      cursor: pointer;
+    }
+    .member-item-name {
+      font-size: 13px;
+      margin-top: 5px;
+      font-weight: 400;
+      cursor: pointer;
+    }
+    .action-icon {
+      width: 36.5px;
+      height: 36.5px;
+      border-radius: 50%;
+      margin: 0 auto;
+      display: block;
+    }
+    .arrow-icon {
+      width: 14px;
+      height: 14px;
+    }
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px 15px;
+      justify-items: center;
+    }
+    .member-item {
+      text-align: center;
+      width: 100%;
+    }
+    .group-info-section {
+      padding: 10px 0;
+      margin-top: -5px;
+    }
+    .group-info-title {
+      font-size: 14px;
+      color: #999;
+      padding: 0 20px 8px;
+    }
+    .info-item-card {
+      padding: 0;
+    }
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14.24px 20px;
+      position: relative;
+      cursor: pointer;
+    }
+    .info-item:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 0;
+      height: 1px;
+      background-color: #f5f5f5;
+    }
+    .info-label {
+      font-size: 18px;
+      color: #333;
+    }
+    .info-value {
+      font-size: 15px;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .small-text {
+      font-size: 14px;
+      color: #989799;
+    }
+    .qrcode-icon {
+      width: 16px;
+      height: 16px;
+      background: url('https://xikayun.com/qun/img/6.png') center/cover;
+    }
+    .group-apps-card {
+      padding: 12.8px 20px;
+      margin-top: 14px;
+    }
+    .apps-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    .app-item {
+      text-align: center;
+    }
+    .app-icon {
+      width: 37px;
+      height: 37px;
+      border-radius: 8px;
+      margin: 0 auto;
+      background-size: cover;
+      background-position: center;
+    }
+    .app-name {
+      font-size: 12px;
+      color: #333;
+      margin-top: 4px;
+    }
+
+    .edit-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+    }
+    .modal-section {
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #333;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    .input-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #555;
+    }
+    .input-field {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .btn-primary {
+      background-color: #1E4B7B;
+      color: white;
+    }
+    .btn-secondary {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .avatar-upload-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .avatar-preview {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-bottom: 10px;
+      border: 2px solid #ddd;
+      cursor: pointer;
+    }
+    .avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .upload-btn {
+      background-color: #1E4B7B;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .members-avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+    .member-avatar-item {
+      text-align: center;
+      cursor: pointer;
+    }
+    .member-avatar-preview {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 5px;
+      border: 2px solid #ddd;
+    }
+    .member-avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .member-name-input {
+      width: 100%;
+      padding: 4px 6px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 10px;
+      text-align: center;
+      margin-top: 2px;
+    }
+    .member-name-input:focus {
+      border-color: #1E4B7B;
+      outline: none;
+    }
+
+    .unified-name-edit {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    .personal-name-group {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+  </style>
+</head>
+<div class="announcement-modal" id="announcement-modal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 100002;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+">
+    <div class="announcement-content" style="
+        background-color: white;
+        border-radius: 12px;
+        width: 85%;
+        max-width: 400px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+    ">
+        <div class="announcement-header" style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        ">
+            <div class="announcement-title" style="
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            ">公告须知</div>
+            <button class="announcement-close" id="announcement-close" disabled style="
+                background: #ff4d4f;
+                color: white;
+                border: none;
+                font-size: 18px;
+                cursor: pointer;
+                padding: 8px 12px;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                transition: all 0.2s ease;
+            ">&times;</button>
+        </div>
+        <div class="announcement-body" style="
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+            padding: 10px 0;
+        ">
+            <p>模拟器公益最新版本</p>
+            <p>不收取任何费用请勿受骗</p>
+            <p>请务必加入QQ群避免失效</p>
+            <p>模拟器交流群：832153123</p>
+        </div>
+        <div class="announcement-footer" style="
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        ">
+            <div class="announcement-checkbox" style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                color: #666;
+            ">
+                <input type="checkbox" id="announcement-dont-show" style="width: 16px; height: 16px;">
+                <label for="announcement-dont-show">24小时内不再显示</label>
+            </div>
+            <div class="announcement-timer" id="announcement-timer" style="
+                font-size: 13px;
+                color: #999;
+                text-align: center;
+                margin-top: 5px;
+            ">请阅读2秒后关闭</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // --- 核心逻辑函数 ---
+        function showAnnouncement() {
+            const lastClosed = localStorage.getItem('announcementLastClosed');
+            if (lastClosed) {
+                const now = new Date().getTime();
+                const timeDiff = now - parseInt(lastClosed);
+                const hoursDiff = timeDiff / (1000 * 60 * 60);
+                
+                if (hoursDiff < 24) {
+                    return; // 24小时内不显示
+                }
+            }
+            
+            announcementModal.style.display = 'flex';
+            announcementClose.disabled = true;
+            
+            let secondsLeft = 2; // 倒计时秒数
+            announcementTimer.textContent = `请阅读${secondsLeft}秒后关闭`;
+            
+            announcementTimerInterval = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft <= 0) {
+                    clearInterval(announcementTimerInterval);
+                    announcementClose.disabled = false;
+                    announcementTimer.textContent = '可以关闭了';
+                } else {
+                    announcementTimer.textContent = `请阅读${secondsLeft}秒后关闭`;
+                }
+            }, 1000);
+        }
+
+        function closeAnnouncement() {
+            if (announcementDontShow.checked) {
+                localStorage.setItem('announcementLastClosed', new Date().getTime().toString());
+            }
+            
+            announcementModal.style.display = 'none';
+            
+            if (announcementTimerInterval) {
+                clearInterval(announcementTimerInterval);
+            }
+        }
+        
+        // --- 事件绑定和启动 ---
+        announcementClose.addEventListener('click', closeAnnouncement);
+
+        // 页面加载完成后显示公告 (延迟1秒启动)
+        setTimeout(showAnnouncement, 1000);
+    });
+</script>
+<body>
+  <div class="max-w-md mx-auto" id="mainContent">
+    <div class="header">
+      <img src="https://xikayun.com/qun/img/1.png" alt="返回" class="left-btn">
+      <h2 class="text-lg font-medium">群聊设置</h2>
+      <img src="https://xikayun.com/qun/img/2.png" alt="更多" class="right-btn">
+    </div>
+
+    <div class="card-container">
+      <div class="card group-card" onclick="openEditModal()">
+        <div class="flex items-center">
+          <div class="group-avatar" id="groupAvatarDisplay"></div>
+          <div class="flex-1">
+            <h3 class="font-medium" id="groupNameDisplay">模拟器</h3>
+            <p class="text-sm text-gray-500 mt-1" id="groupDescDisplay">在这里，发现更多~</p>
+          </div>
+          <img src="https://xikayun.com/qun/img/5.png" alt="箭头" class="arrow-icon">
+        </div>
+      </div>
+
+      <div class="card members-card">
+        <div class="flex justify-between items-center mb-3">
+          <span class="members-title">群聊成员</span>
+          <div class="flex items-center gap-1">
+            <span class="text-sm text-gray-500" id="memberCountDisplay">查看888名群成员</span>
+            <img src="https://xikayun.com/qun/img/5.png" alt="箭头" class="arrow-icon">
+          </div>
+        </div>
+        <div class="members-grid">
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar1"></div>
+            <p class="member-item-name" id="member1Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar2"></div>
+            <p class="member-item-name" id="member2Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar3"></div>
+            <p class="member-item-name" id="member3Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar4"></div>
+            <p class="member-item-name" id="member4Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar5"></div>
+            <p class="member-item-name" id="member5Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar6"></div>
+            <p class="member-item-name" id="member6Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar7"></div>
+            <p class="member-item-name" id="member7Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar8"></div>
+            <p class="member-item-name" id="member8Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar9"></div>
+            <p class="member-item-name" id="member9Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar10"></div>
+            <p class="member-item-name" id="member10Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar11"></div>
+            <p class="member-item-name" id="member11Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar12"></div>
+            <p class="member-item-name" id="member12Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar" id="memberAvatar13"></div>
+            <p class="member-item-name" id="member13Name">模拟器</p>
+          </div>
+          <div class="member-item">
+            <img src="https://xikayun.com/qun/img/3.png" alt="邀请" class="action-icon">
+            <p class="member-item-name">邀请</p>
+          </div>
+          <div class="member-item">
+            <img src="https://xikayun.com/qun/img/4.png" alt="移除" class="action-icon">
+            <p class="member-item-name">移除</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="group-info-section">
+        <div class="group-info-title">群聊信息</div>
+        <div class="card info-item-card">
+          <div class="info-item" onclick="openEditModal()">
+            <div class="info-label">群聊名称</div>
+            <div class="info-value">
+              <span id="groupNameValue">模拟器</span>
+              <img src="https://xikayun.com/qun/img/5.png" alt="箭头" class="arrow-icon">
+            </div>
+          </div>
+          <div class="info-item" onclick="openEditModal()">
+            <div class="info-label">群号和二维码</div>
+            <div class="info-value">
+              <span id="groupNumberValue">88888</span>
+              <div class="qrcode-icon"></div>
+              <img src="https://xikayun.com/qun/img/5.png" alt="箭头" class="arrow-icon">
+            </div>
+          </div>
+          <div class="info-item" onclick="openEditModal()">
+            <div class="info-label">群公告</div>
+            <div class="info-value">
+              <span id="groupNoticeValue">未设置</span>
+              <img src="https://xikayun.com/qun/img/5.png" alt="箭头" class="arrow-icon">
+            </div>
+          </div>
+          <div class="info-item" onclick="openEditModal()">
+            <div class="info-label">我的本群昵称</div>
+            <div class="info-value">
+              <span id="myNicknameValue">模拟器</span>
+              <img src="https://xikayun.com/qun/img/5.png" alt="箭头" class="arrow-icon">
+            </div>
+          </div>
+          <div class="info-item" onclick="openEditModal()">
+            <div class="info-label">群聊备注</div>
+            <div class="info-value">
+              <span id="groupRemarkValue">未设置</span>
+              <img src="https://xikayun.com/qun/img/5.png" alt="箭头" class="arrow-icon">
+            </div>
+          </div>
+        </div>
+
+        <div class="card group-apps-card">
+          <div class="apps-header">
+            <div class="info-label">群应用中心</div>
+            <div class="info-value">
+              <span>更多</span>
+              <img src="https://xikayun.com/qun/img/5.png" alt="箭头" class="arrow-icon">
+            </div>
+          </div>
+          <div class="apps-grid">
+            <div class="app-item">
+              <div class="app-icon" style="background-image: url('https://xikayun.com/qun/gn/1.png')"></div>
+              <p class="app-name">管理群</p>
+            </div>
+            <div class="app-item">
+              <div class="app-icon" style="background-image: url('https://xikayun.com/qun/gn/2.png')"></div>
+              <p class="app-name">文件</p>
+            </div>
+            <div class="app-item">
+              <div class="app-icon" style="background-image: url('https://xikayun.com/qun/gn/3.png')"></div>
+              <p class="app-name">相册</p>
+            </div>
+            <div class="app-item">
+              <div class="app-icon" style="background-image: url('https://xikayun.com/qun/gn/4.png')"></div>
+              <p class="app-name">精华消息</p>
+            </div>
+            <div class="app-item">
+              <div class="app-icon" style="background-image: url('https://xikayun.com/qun/gn/5.png')"></div>
+              <p class="app-name">一起听歌</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card info-item-card" style="margin-top: 14px;">
+          <div class="info-item">
+            <div class="info-label">群机器人</div>
+            <div class="info-value">
+              <span class="small-text">未添加</span>
+              <img src="https://xikayun.com/qun/img/5.png" alt="箭头" class="arrow-icon">
+            </div>
+          </div>
+        </div>
+
+        <div class="card info-item-card" style="margin-top: 14px;">
+          <div class="info-item">
+            <div class="info-label">管理群</div>
+            <div class="info-value">
+              <span class="small-text">加群设置、智能管理等</span>
+              <img src="https://xikayun.com/qun/img/5.png" alt="箭头" class="arrow-icon">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="edit-modal" id="editModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">编辑群聊信息</div>
+        <button class="close-btn" onclick="closeEditModal()">&times;</button>
+      </div>
+      
+      <div class="modal-section">
+        <div class="section-title">群头像和个人名称</div>
+        <div class="avatar-upload-group">
+          <div class="avatar-preview" onclick="triggerGroupAvatarUpload()">
+            <img src="https://xikayun.com/qun/img/logo.png" alt="群头像" id="editGroupAvatarPreview">
+          </div>
+          <div class="upload-btn" onclick="triggerGroupAvatarUpload()">更换群头像</div>
+          <input type="file" id="groupAvatarInput" accept="image/*" style="display: none;" onchange="handleGroupAvatarUpload(this.files[0])">
+          
+          <div class="personal-name-group">
+            <div class="input-group">
+              <label class="input-label">个人名称</label>
+              <input type="text" class="input-field" id="editPersonalName" value="模拟器" placeholder="请输入个人名称">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="section-title">群基本信息</div>
+        <div class="input-group">
+          <label class="input-label">群聊名称</label>
+          <input type="text" class="input-field" id="editGroupName" value="模拟器">
+        </div>
+        <div class="input-group">
+          <label class="input-label">群简介</label>
+          <input type="text" class="input-field" id="editGroupDesc" value="在这里，发现更多~">
+        </div>
+        <div class="input-group">
+          <label class="input-label">群号</label>
+          <input type="text" class="input-field" id="editGroupNumber" value="88888">
+        </div>
+        <div class="input-group">
+          <label class="input-label">群公告</label>
+          <input type="text" class="input-field" id="editGroupNotice" value="未设置">
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="section-title">个人设置</div>
+        <div class="input-group">
+          <label class="input-label">我的本群昵称</label>
+          <input type="text" class="input-field" id="editMyNickname" value="模拟器">
+        </div>
+        <div class="input-group">
+          <label class="input-label">群聊备注</label>
+          <input type="text" class="input-field" id="editGroupRemark" value="未设置">
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="section-title">成员设置</div>
+        <div class="input-group">
+          <label class="input-label">成员数量显示</label>
+          <input type="text" class="input-field" id="editMemberCount" value="666">
+        </div>
+        
+        <div class="unified-name-edit">
+          <div class="input-group">
+            <label class="input-label">统一修改成员名字</label>
+            <input type="text" class="input-field" id="unifiedMemberName" placeholder="输入统一名字" onchange="updateAllMemberNames(this.value)">
+          </div>
+        </div>
+
+        <div class="members-avatar-grid">
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(1)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员1" id="editMemberAvatar1">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName1" value="模拟器" placeholder="成员1名字" onchange="updateSingleMemberName(1, this.value)">
+          </div>
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(2)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员2" id="editMemberAvatar2">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName2" value="模拟器" placeholder="成员2名字" onchange="updateSingleMemberName(2, this.value)">
+          </div>
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(3)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员3" id="editMemberAvatar3">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName3" value="模拟器" placeholder="成员3名字" onchange="updateSingleMemberName(3, this.value)">
+          </div>
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(4)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员4" id="editMemberAvatar4">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName4" value="模拟器" placeholder="成员4名字" onchange="updateSingleMemberName(4, this.value)">
+          </div>
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(5)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员5" id="editMemberAvatar5">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName5" value="模拟器" placeholder="成员5名字" onchange="updateSingleMemberName(5, this.value)">
+          </div>
+          
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(6)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员6" id="editMemberAvatar6">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName6" value="模拟器" placeholder="成员6名字" onchange="updateSingleMemberName(6, this.value)">
+          </div>
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(7)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员7" id="editMemberAvatar7">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName7" value="模拟器" placeholder="成员7名字" onchange="updateSingleMemberName(7, this.value)">
+          </div>
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(8)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员8" id="editMemberAvatar8">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName8" value="模拟器" placeholder="成员8名字" onchange="updateSingleMemberName(8, this.value)">
+          </div>
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(9)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员9" id="editMemberAvatar9">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName9" value="模拟器" placeholder="成员9名字" onchange="updateSingleMemberName(9, this.value)">
+          </div>
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(10)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员10" id="editMemberAvatar10">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName10" value="模拟器" placeholder="成员10名字" onchange="updateSingleMemberName(10, this.value)">
+          </div>
+          
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(11)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员11" id="editMemberAvatar11">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName11" value="模拟器" placeholder="成员11名字" onchange="updateSingleMemberName(11, this.value)">
+          </div>
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(12)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员12" id="editMemberAvatar12">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName12" value="模拟器" placeholder="成员12名字" onchange="updateSingleMemberName(12, this.value)">
+          </div>
+          <div class="member-avatar-item">
+            <div class="member-avatar-preview" onclick="triggerMemberAvatarUpload(13)">
+              <img src="https://xikayun.com/qun/img/logo.png" alt="成员13" id="editMemberAvatar13">
+            </div>
+            <input type="text" class="member-name-input" id="editMemberName13" value="模拟器" placeholder="成员13名字" onchange="updateSingleMemberName(13, this.value)">
+          </div>
+        </div>
+        <input type="file" id="memberAvatarInput" accept="image/*" style="display: none;" onchange="handleMemberAvatarUpload(this.files[0])">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeEditModal()">取消</button>
+        <button class="btn btn-primary" onclick="saveAllChanges()">保存所有更改</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentEditingMemberId = null;
+
+    function openEditModal() {
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    function triggerGroupAvatarUpload() {
+      document.getElementById('groupAvatarInput').click();
+    }
+
+    function handleGroupAvatarUpload(file) {
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imgSrc = event.target.result;
+          document.getElementById('editGroupAvatarPreview').src = imgSrc;
+          document.getElementById('groupAvatarDisplay').style.backgroundImage = `url('${imgSrc}')`;
+          saveToLocalStorage();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function triggerMemberAvatarUpload(memberId) {
+      currentEditingMemberId = memberId;
+      document.getElementById('memberAvatarInput').click();
+    }
+
+    function handleMemberAvatarUpload(file) {
+      if (file && currentEditingMemberId) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imgSrc = event.target.result;
+          document.getElementById(`editMemberAvatar${currentEditingMemberId}`).src = imgSrc;
+          document.getElementById(`memberAvatar${currentEditingMemberId}`).style.backgroundImage = `url('${imgSrc}')`;
+          saveToLocalStorage();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function updateAllMemberNames(newName) {
+      if (newName.trim()) {
+        for (let i = 1; i <= 13; i++) {
+          document.getElementById(`member${i}Name`).textContent = newName;
+          document.getElementById(`editMemberName${i}`).value = newName;
+        }
+        saveToLocalStorage();
+      }
+    }
+
+    function updateSingleMemberName(memberId, newName) {
+      if (newName.trim()) {
+        document.getElementById(`member${memberId}Name`).textContent = newName;
+        saveToLocalStorage();
+      }
+    }
+
+    function saveAllChanges() {
+      const groupName = document.getElementById('editGroupName').value;
+      const groupDesc = document.getElementById('editGroupDesc').value;
+      const groupNumber = document.getElementById('editGroupNumber').value;
+      const groupNotice = document.getElementById('editGroupNotice').value;
+      
+      document.getElementById('groupNameDisplay').textContent = groupName;
+      document.getElementById('groupNameValue').textContent = groupName;
+      document.getElementById('groupDescDisplay').textContent = groupDesc;
+      document.getElementById('groupNumberValue').textContent = groupNumber;
+      document.getElementById('groupNoticeValue').textContent = groupNotice;
+
+      const myNickname = document.getElementById('editMyNickname').value;
+      const groupRemark = document.getElementById('editGroupRemark').value;
+      
+      document.getElementById('myNicknameValue').textContent = myNickname;
+      document.getElementById('groupRemarkValue').textContent = groupRemark;
+
+      const memberCount = document.getElementById('editMemberCount').value;
+      document.getElementById('memberCountDisplay').textContent = `查看${memberCount}名群成员`;
+
+      saveToLocalStorage();
+      closeEditModal();
+    }
+
+    function saveToLocalStorage() {
+      const data = {
+        groupName: document.getElementById('groupNameDisplay').textContent,
+        groupDesc: document.getElementById('groupDescDisplay').textContent,
+        groupNumber: document.getElementById('groupNumberValue').textContent,
+        groupNotice: document.getElementById('groupNoticeValue').textContent,
+        myNickname: document.getElementById('myNicknameValue').textContent,
+        groupRemark: document.getElementById('groupRemarkValue').textContent,
+        memberCount: document.getElementById('memberCountDisplay').textContent.replace('查看', '').replace('名群成员', ''),
+        groupAvatar: document.getElementById('editGroupAvatarPreview').src
+      };
+      
+      for (let i = 1; i <= 13; i++) {
+        data[`member${i}Name`] = document.getElementById(`member${i}Name`).textContent;
+        data[`member${i}Avatar`] = document.getElementById(`editMemberAvatar${i}`).src;
+        data[`editMemberName${i}`] = document.getElementById(`editMemberName${i}`).value;
+      }
+      
+      localStorage.setItem('groupSettings', JSON.stringify(data));
+    }
+
+    function loadFromLocalStorage() {
+      const saved = localStorage.getItem('groupSettings');
+      if (saved) {
+        const data = JSON.parse(saved);
+        
+        for (const key in data) {
+          if (key.includes('Avatar')) {
+            const element = document.getElementById(key.replace('edit', '').replace('Avatar', 'Avatar'));
+            if (element) {
+              if (key.includes('group')) {
+                element.style.backgroundImage = `url('${data[key]}')`;
+              } else {
+                element.style.backgroundImage = `url('${data[key]}')`;
+              }
+            }
+            const previewElement = document.getElementById(`edit${key.charAt(0).toUpperCase() + key.slice(1)}`);
+            if (previewElement) {
+              previewElement.src = data[key];
+            }
+          } else {
+            const element = document.getElementById(key);
+            if (element) {
+              if (element.type === 'text' || element.tagName === 'INPUT') {
+                element.value = data[key];
+              } else {
+                element.textContent = data[key];
+              }
+            }
+          }
+        }
+        
+        document.getElementById('editGroupName').value = data.groupName || '模拟器';
+        document.getElementById('editGroupDesc').value = data.groupDesc || '在这里，发现更多~';
+        document.getElementById('editGroupNumber').value = data.groupNumber || '88888';
+        document.getElementById('editGroupNotice').value = data.groupNotice || '未设置';
+        document.getElementById('editMyNickname').value = data.myNickname || '模拟器';
+        document.getElementById('editGroupRemark').value = data.groupRemark || '未设置';
+        document.getElementById('editMemberCount').value = data.memberCount || '666';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      loadFromLocalStorage();
+      hideAddressBar();
+    });
+    
+    // 隐藏浏览器地址栏
+    function hideAddressBar() {
+      // 对于iOS Safari，添加到主屏幕后会自动隐藏地址栏
+      // 对于普通浏览，通过滚动来隐藏地址栏
+      if (window.innerHeight < screen.height) {
+        window.scrollTo(0, 1);
+      }
+    }
+    
+    // 监听窗口大小变化，确保始终隐藏地址栏
+    window.addEventListener('resize', hideAddressBar);
+    window.addEventListener('orientationchange', hideAddressBar);
+    window.addEventListener('load', hideAddressBar);
+
+    document.getElementById('editModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditModal();
+      }
+    });
+  </script>
+</body>
+
+<script>
+    // 禁止右键菜单
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+    
+    // 禁止F12、Ctrl+Shift+I、Ctrl+Shift+J、Ctrl+U等快捷键
+    document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.key === 'F12') {
+            e.preventDefault();
+        }
+        // Ctrl+Shift+I
+        if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+            e.preventDefault();
+        }
+        // Ctrl+Shift+J
+        if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+            e.preventDefault();
+        }
+        // Ctrl+U
+        if (e.ctrlKey && e.key === 'u') {
+            e.preventDefault();
+        }
+        // Ctrl+Shift+C
+        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+            e.preventDefault();
+        }
+        // Ctrl+Shift+K
+        if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+            e.preventDefault();
+        }
+        // Alt+X
+        if (e.altKey && e.key === 'x') {
+            e.preventDefault();
+        }
+        // Alt+F4 (虽然是关闭窗口，但也可以阻止)
+        if (e.altKey && e.key === 'F4') {
+            e.preventDefault();
+        }
+    });
+    
+    
+    
+    // 检测开发者工具是否打开
+    (function() {
+        var devtools = { open: false };
+        var threshold = 160;
+        
+        function detectDevTools() {
+            if (window.outerWidth - window.innerWidth > threshold || 
+                window.outerHeight - window.innerHeight > threshold) {
+                devtools.open = true;
+                // 可以在这里添加处理逻辑，如刷新页面或显示警告
+                window.location.reload();
+            } else {
+                devtools.open = false;
+            }
+        }
+        
+        // 监听窗口大小变化
+        window.addEventListener('resize', detectDevTools);
+        // 初始检测
+        detectDevTools();
+        
+        // 使用Performance API检测开发者工具
+        if (typeof performance !== 'undefined') {
+            var start = performance.now();
+            debugger;
+            var end = performance.now();
+            if (end - start > 100) {
+                devtools.open = true;
+                window.location.reload();
+            }
+        }
+    })();
+    
+    // 检测代理（增加抓包难度）
+    (function() {
+        // 检查是否存在代理
+        if (window.navigator.webdriver || 
+            window.navigator.platform === 'Win32' && window.navigator.userAgent.indexOf('Win32') > -1 ||
+            window.external && window.external.msIsSiteMode() === undefined) {
+            // 可以在这里添加处理逻辑
+        }
+        
+        // 检测请求头中的特殊字段
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', window.location.href, false);
+        xhr.send(null);
+    })();
+</script>
+<style>
+  
+    /* 禁止点击右键时显示的菜单 */
+    body {
+        cursor: default;
+    }
+    
+    /* 隐藏滚动条（可选） */
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    
+    }
+</style>
+</html>
