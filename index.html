@@ -1,146 +1,59 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>装逼小助手</title>
-    <!-- /favicon.ico 链接保留，不影响核心功能 -->
-    <link href="https://jmcomicfg.net/favicon.ico?v=2" rel="Shortcut Icon" type="image/ico">
-    
-    <!-- 1. 完全内嵌所有样式，彻底解决CSS加载问题 -->
-    <style>
-        /* 全局基础样式 */
-        body {
-            margin: 0;
-            padding: 20px;
-            background: #f0f2f5;
-            font-family: 微软雅黑, Arial, sans-serif;
-        }
-        .snap-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .main-content {
-            background: white;
-            padding: 50px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
-        }
-        /* 标题样式 */
-        h1 {
-            color: #1a1a1a;
-            font-size: 36px;
-            margin: 0 0 15px 0;
-            text-align: left;
-        }
-        h2 {
-            color: #666;
-            font-size: 18px;
-            font-weight: normal;
-            margin: 0 0 40px 0;
-        }
-        /* 段落样式 */
-        p {
-            color: #333;
-            font-size: 16px;
-            margin: 25px 0 10px 0;
-        }
-        /* 下载按钮核心样式（和原版一致） */
-        .app {
-            color: white !important;
-            background: #2d8cf0 !important;
-            padding: 15px 40px !important;
-            font-size: 20px !important;
-            border-radius: 8px !important;
-            display: inline-block !important;
-            cursor: pointer !important;
-            margin: 10px 0 !important;
-            border: none !important;
-            text-decoration: none !important;
-        }
-        .app:hover {
-            background: #1c7ed6 !important;
-        }
-        /* 评价/开发人员/QQ群样式 */
-        .email, .discord {
-            background: #f8f9fa;
-            padding: 20px;
-            border-left: 5px solid #2d8cf0;
-            margin: 10px 0 20px 0;
-            color: #555;
-            font-size: 15px;
-            line-height: 1.6;
-        }
-    </style>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>装逼小助手</title>
+<link href="./wwb/style-2.css" rel="stylesheet">
+<link href="https://jmcomicfg.net/favicon.ico?v=2" rel="Shortcut Icon" type="image/ico">
+<!-- Google tag (gtag.js) --><script async="" src="./wwb/js"></script><script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-SDZR7NL41W');
+</script>
+</head><body><main class="snap-container">
 
-    <!-- 2. 谷歌统计代码（用官方CDN，避免本地文件依赖） -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SDZR7NL41W"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-SDZR7NL41W');
+    <div class="page main-content">
+        <div class="wrap">
+            <h1>装逼小助手官网</h1>
+            <h2>一款可以让您成为朋友圈之神的黑科技软件</h2>
+            <div>
+            </div>
 
-        // 3. 下载功能（兼容所有浏览器，强制触发下载）
-        function downloadApk() {
-            // 创建隐藏的a标签，强制触发下载弹窗
-            const a = document.createElement('a');
-            a.href = 'https://pan.staryears.cn/f/E2niY/%E8%A3%85%E9%80%BC%E5%B0%8F%E5%8A%A9%E6%89%8B.apk';
-            a.download = '装逼小助手.apk'; // 指定下载文件名
-            document.body.appendChild(a);
-            a.click(); // 模拟点击
-            document.body.removeChild(a); // 移除临时标签
-        }
-    </script>
-</head>
-<body>
-    <main class="snap-container">
-        <div class="page main-content">
-            <div class="wrap">
-                <h1>装逼小助手官网</h1>
-                <h2>一款可以让您成为朋友圈之神的黑科技软件</h2>
-
-                <div>
-                    <p>直链不限速下载链接!!!</p>
-                    <!-- 4. 下载按钮：纯DIV+点击事件，样式用!important强制生效 -->
-                    <div class="app" onclick="downloadApk()">点我下载</div>
-                </div>
-
-                <div>
-                    <p>真实用户评价：</p>
-                    <div class="email">
-                        <span>装逼小助手是一个内含很多装逼功能的黑科技工具箱，里面有超级多的装逼功能可以让你在朋友圈装一波，里面的功能都是精品中的精品</span>
-                    </div>
-                </div>
-
-                <div>
-                    <p>开发人员：</p>
-                    <div class="email"><span>蒜蓉、不吃香菜</span></div>
-                </div>
-
-                <div>
-                    <p>加入我们的QQ群：</p>
-                    <div class="discord"><span>1081975259</span></div>
-                </div>
+            <div>
+                <p>直链不限速下载链接!!!</p>
+                <div class="app">点我下载<span> </span>
+</div>
+            </div>
+            <div>
+                <p>真实用户评价：</p>
+                <div class="email"><span>装逼小助手是一个内含很多装逼功能的黑科技工具箱，里面有超级多的装逼功能可以让你在朋友圈装一波，里面的功能都是精品中的精品</span>
+</div>
+            <div>
+                <p>开发人员：</p>
+                <div class="email"><span>蒜蓉、不吃香菜</span>
+</div>
+            </div>
+            <div>
+                <p>加入我们的QQ群：</p>
+                <div class="discord"><span>1081975259</span>
+</div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- 5. 保留原有滚动逻辑（不影响，加容错） -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const snapContainer = document.querySelector('.snap-container');
-            const navDots = document.querySelectorAll('.nav-dot');
-            // 只有存在导航点时才执行，避免报错
-            if (snapContainer && navDots.length > 0) {
-                snapContainer.addEventListener('scroll', () => {
-                    let index = Math.round(snapContainer.scrollTop / window.innerHeight);
-                    navDots.forEach((dot, i) => {
-                        dot.classList.toggle('dot-active', i === index);
-                    });
-                });
-            }
+
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const snapContainer = document.querySelector('.snap-container');
+        const pages = document.querySelectorAll('.page');
+        const navDots = document.querySelectorAll('.nav-dot');
+
+        snapContainer.addEventListener('scroll', () => {
+            let index = Math.round(snapContainer.scrollTop / window.innerHeight);
+            navDots.forEach((dot, i) => {
+                dot.classList.toggle('dot-active', i === index);
+            });
         });
-    </script>
-</body>
-</html>
+    });
+
+</script></body></html>
