@@ -3,6 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>装逼小助手</title>
+    <!-- 保留你原有样式文件，保证所有样式和之前完全一致 -->
     <link href="./wwb/style-2.css" rel="stylesheet">
     <link href="https://jmcomicfg.net/favicon.ico?v=2" rel="Shortcut Icon" type="image/ico">
     <!-- Google tag (gtag.js) -->
@@ -23,9 +24,11 @@
                 <div></div>
                 <div>
                     <p>直链不限速下载链接!!!</p>
-                    <!-- 核心修改：添加a标签包裹下载文字，href替换为实际下载直链，添加download属性触发下载弹窗 -->
+                    <!-- 核心修复：保留原有div样式结构 + 正确的下载链接 + 样式完全继承 -->
                     <div class="app">
-                        <a href="你的实际下载直链地址" download style="color: inherit; text-decoration: none;">点我下载</a>
+                        <a href="https://pan.staryears.cn/f/E2niY/%E8%A3%85%E9%80%BC%E5%B0%8F%E5%8A%A9%E6%89%8B.apk" 
+                           download="装逼小助手.apk"
+                           style="all: inherit; cursor: pointer;">点我下载</a>
                         <span> </span>
                     </div>
                 </div>
