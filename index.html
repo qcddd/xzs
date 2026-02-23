@@ -3,16 +3,27 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>装逼小助手</title>
-    <!-- 保留你原有样式文件，保证所有样式和之前完全一致 -->
-    <link href="./wwb/style-2.css" rel="stylesheet">
+    <!-- 修复：根据GitHub仓库路径调整样式文件引用（核心！） -->
+    <link href="/wwb/style-2.css" rel="stylesheet">
     <link href="https://jmcomicfg.net/favicon.ico?v=2" rel="Shortcut Icon" type="image/ico">
     <!-- Google tag (gtag.js) -->
-    <script async="" src="./wwb/js"></script>
+    <script async="" src="/wwb/js"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-SDZR7NL41W');
+        
+        // 下载函数：点击文字触发下载，不修改样式
+        function downloadApp() {
+            const link = document.createElement('a');
+            link.href = 'https://pan.staryears.cn/f/E2niY/%E8%A3%85%E9%80%BC%E5%B0%8F%E5%8A%A9%E6%89%8B.apk';
+            link.download = '装逼小助手.apk';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     </script>
 </head>
 <body>
@@ -24,12 +35,9 @@
                 <div></div>
                 <div>
                     <p>直链不限速下载链接!!!</p>
-                    <!-- 核心修复：保留原有div样式结构 + 正确的下载链接 + 样式完全继承 -->
-                    <div class="app">
-                        <a href="https://pan.staryears.cn/f/E2niY/%E8%A3%85%E9%80%BC%E5%B0%8F%E5%8A%A9%E6%89%8B.apk" 
-                           download="装逼小助手.apk"
-                           style="all: inherit; cursor: pointer;">点我下载</a>
-                        <span> </span>
+                    <!-- 保留原样式结构 + 绑定下载事件，样式100%不变 -->
+                    <div class="app" onclick="downloadApp()" style="cursor: pointer;">
+                        点我下载<span> </span>
                     </div>
                 </div>
                 <div>
