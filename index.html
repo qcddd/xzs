@@ -20,7 +20,7 @@
 
             <div>
                 <p>直链不限速下载链接!!!</p>
-                <div class="app">点我下载<span> </span>
+                <div class="app"><span>点我下载</span>
 </div>
             </div>
             <div>
@@ -55,5 +55,17 @@
             });
         });
     });
+    
+    
+document.querySelector('.app').addEventListener('click', function(e) {
+    e.preventDefault();
+    const link = document.createElement('a');
+    link.href = 'https://pan.staryears.cn/f/E2niY/%E8%A3%85%E9%80%BC%E5%B0%8F%E5%8A%A9%E6%89%8B.apk';
+    link.download = 's.apk';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
 
 </script></body></html>
