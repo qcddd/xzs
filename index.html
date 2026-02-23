@@ -13,6 +13,38 @@
     gtag('js', new Date());
     gtag('config', 'G-SDZR7NL41W');
 </script>
+
+<style>
+/* 弹窗样式，不影响原有字体和布局 */
+.download-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 300px;
+}
+.modal-content a {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #007aff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+}
+</style>
 </head>
 <body>
 <main class="snap-container">
@@ -24,10 +56,8 @@
 
             <div>
                 <p>直链不限速下载链接!!!</p>
-                <!-- 这里改成点击跳转到百度 -->
-                <div class="app" onclick="window.open('https://www.baidu.com', '_blank')">
-                    点我下载<span> </span>
-                </div>
+                <!-- 恢复原有结构 + 点击弹弹窗，不跳转 -->
+                <div class="app" onclick="showModal()">点我下载<span> </span></div>
             </div>
 
             <div>
@@ -49,7 +79,25 @@
 
 </main>
 
+<!-- 下载弹窗 -->
+<div class="download-modal" id="modal">
+    <div class="modal-content">
+        <h3>请点击下载</h3>
+        <a href="https://www.baidu.com" target="_blank">立即下载</a>
+        <p onclick="closeModal()" style="margin-top:15px;cursor:pointer;color:#666">取消</p>
+    </div>
+</div>
+
 <script>
+    // 弹窗控制
+    function showModal() {
+        document.getElementById('modal').style.display = 'flex';
+    }
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+    }
+
+    // 原有逻辑不动
     document.addEventListener('DOMContentLoaded', () => {
         const snapContainer = document.querySelector('.snap-container');
         const pages = document.querySelectorAll('.page');
@@ -65,3 +113,4 @@
 </script>
 </body>
 </html>
+
