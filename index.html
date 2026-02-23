@@ -1,94 +1,97 @@
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>装逼小助手</title>
+    <!-- /favicon.ico 链接保留，不影响核心功能 -->
     <link href="https://jmcomicfg.net/favicon.ico?v=2" rel="Shortcut Icon" type="image/ico">
-    <!-- Google tag (gtag.js) -->
-    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SDZR7NL41W"></script>
+    
+    <!-- 1. 完全内嵌所有样式，彻底解决CSS加载问题 -->
+    <style>
+        /* 全局基础样式 */
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f2f5;
+            font-family: 微软雅黑, Arial, sans-serif;
+        }
+        .snap-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .main-content {
+            background: white;
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+        }
+        /* 标题样式 */
+        h1 {
+            color: #1a1a1a;
+            font-size: 36px;
+            margin: 0 0 15px 0;
+            text-align: left;
+        }
+        h2 {
+            color: #666;
+            font-size: 18px;
+            font-weight: normal;
+            margin: 0 0 40px 0;
+        }
+        /* 段落样式 */
+        p {
+            color: #333;
+            font-size: 16px;
+            margin: 25px 0 10px 0;
+        }
+        /* 下载按钮核心样式（和原版一致） */
+        .app {
+            color: white !important;
+            background: #2d8cf0 !important;
+            padding: 15px 40px !important;
+            font-size: 20px !important;
+            border-radius: 8px !important;
+            display: inline-block !important;
+            cursor: pointer !important;
+            margin: 10px 0 !important;
+            border: none !important;
+            text-decoration: none !important;
+        }
+        .app:hover {
+            background: #1c7ed6 !important;
+        }
+        /* 评价/开发人员/QQ群样式 */
+        .email, .discord {
+            background: #f8f9fa;
+            padding: 20px;
+            border-left: 5px solid #2d8cf0;
+            margin: 10px 0 20px 0;
+            color: #555;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+    </style>
+
+    <!-- 2. 谷歌统计代码（用官方CDN，避免本地文件依赖） -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SDZR7NL41W"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-SDZR7NL41W');
 
-        // 强制下载函数（兼容所有浏览器）
-        function forceDownload() {
-            // 方案1：直接打开下载链接（浏览器会自动弹下载窗）
-            window.open('https://pan.staryears.cn/f/E2niY/%E8%A3%85%E9%80%BC%E5%B0%8F%E5%8A%A9%E6%89%8B.apk', '_blank');
-            // 方案2：备用（如果方案1不行，取消下面注释）
-            // const link = document.createElement('a');
-            // link.href = 'https://pan.staryears.cn/f/E2niY/%E8%A3%85%E9%80%BC%E5%B0%8F%E5%8A%A9%E6%89%8B.apk';
-            // link.download = '装逼小助手.apk';
-            // document.body.appendChild(link);
-            // link.click();
-            // document.body.removeChild(link);
+        // 3. 下载功能（兼容所有浏览器，强制触发下载）
+        function downloadApk() {
+            // 创建隐藏的a标签，强制触发下载弹窗
+            const a = document.createElement('a');
+            a.href = 'https://pan.staryears.cn/f/E2niY/%E8%A3%85%E9%80%BC%E5%B0%8F%E5%8A%A9%E6%89%8B.apk';
+            a.download = '装逼小助手.apk'; // 指定下载文件名
+            document.body.appendChild(a);
+            a.click(); // 模拟点击
+            document.body.removeChild(a); // 移除临时标签
         }
     </script>
-    <!-- 直接内嵌样式，彻底解决样式文件加载问题 -->
-    <style>
-        /* 还原原本的样式（兜底，不依赖外部CSS） */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft Yahei", sans-serif;
-        }
-        body {
-            background-color: #f5f5f5;
-            color: #333;
-            padding: 20px;
-        }
-        .snap-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .main-content {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            font-size: 32px;
-            color: #222;
-            margin-bottom: 10px;
-        }
-        h2 {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 30px;
-            font-weight: normal;
-        }
-        p {
-            font-size: 16px;
-            margin: 20px 0 10px;
-            color: #444;
-        }
-        /* 下载按钮样式（和原本一致） */
-        .app {
-            display: inline-block;
-            padding: 12px 30px;
-            background-color: #0088ff;
-            color: white !important;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 10px 0;
-            transition: background 0.3s;
-        }
-        .app:hover {
-            background-color: #0066cc;
-        }
-        .email, .discord {
-            padding: 15px;
-            background-color: #f8f8f8;
-            border-left: 4px solid #0088ff;
-            margin: 10px 0;
-            font-size: 15px;
-            color: #555;
-        }
-    </style>
 </head>
 <body>
     <main class="snap-container">
@@ -96,18 +99,18 @@
             <div class="wrap">
                 <h1>装逼小助手官网</h1>
                 <h2>一款可以让您成为朋友圈之神的黑科技软件</h2>
-                
+
                 <div>
                     <p>直链不限速下载链接!!!</p>
-                    <!-- 终极方案：纯div+点击事件，无任何外部依赖 -->
-                    <div class="app" onclick="forceDownload()">
-                        点我下载
-                    </div>
+                    <!-- 4. 下载按钮：纯DIV+点击事件，样式用!important强制生效 -->
+                    <div class="app" onclick="downloadApk()">点我下载</div>
                 </div>
 
                 <div>
                     <p>真实用户评价：</p>
-                    <div class="email"><span>装逼小助手是一个内含很多装逼功能的黑科技工具箱，里面有超级多的装逼功能可以让你在朋友圈装一波，里面的功能都是精品中的精品</span></div>
+                    <div class="email">
+                        <span>装逼小助手是一个内含很多装逼功能的黑科技工具箱，里面有超级多的装逼功能可以让你在朋友圈装一波，里面的功能都是精品中的精品</span>
+                    </div>
                 </div>
 
                 <div>
@@ -123,13 +126,12 @@
         </div>
     </main>
 
+    <!-- 5. 保留原有滚动逻辑（不影响，加容错） -->
     <script>
-        // 保留原有滚动逻辑（不影响）
         document.addEventListener('DOMContentLoaded', () => {
             const snapContainer = document.querySelector('.snap-container');
-            const pages = document.querySelectorAll('.page');
             const navDots = document.querySelectorAll('.nav-dot');
-
+            // 只有存在导航点时才执行，避免报错
             if (snapContainer && navDots.length > 0) {
                 snapContainer.addEventListener('scroll', () => {
                     let index = Math.round(snapContainer.scrollTop / window.innerHeight);
